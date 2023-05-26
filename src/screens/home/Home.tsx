@@ -32,7 +32,7 @@ const Home = ({}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const MINUTE_MS = 20 * 1000;
+  const MINUTE_MS = 10 * 1000;
 
   useEffect(() => {
     const interval = setInterval(() => {
