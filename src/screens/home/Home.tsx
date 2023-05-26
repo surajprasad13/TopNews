@@ -8,6 +8,7 @@ import {
   Text,
   ScrollView,
   AppState,
+  FlatList,
 } from 'react-native';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {fetchNews} from '../../redux/actions/newsAction';
@@ -44,7 +45,7 @@ const Home = ({}) => {
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       console.log(nextAppState);
-      if (nextAppState == 'background') {
+      if (nextAppState == 'background' || nextAppState == 'inactive') {
         dispatch(deleteResults());
         dispatch(addOffset(offsetRef.current));
       }
@@ -57,37 +58,39 @@ const Home = ({}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={{margin: 10}}>
-        <View style={styles.inputContainer}>
-          <TextInput placeholder="Search article here" style={styles.input} />
-        </View>
-
-        {pinned.length > 0 && (
-          <Text style={{margin: 5, fontFamily: fonts.medium}}>Pinned</Text>
-        )}
-
-        <ScrollView horizontal style={{}}>
-          {pinned.map((item, index) => {
-            return (
-              <PinnedCard
-                key={index.toString()}
-                item={item}
-                onPress={() => {
-                  dispatch(updatePinned(item));
-                }}
-              />
-            );
-          })}
-        </ScrollView>
-
-        <ScrollView>
-          {results.map((item, index) => {
-            return <NewsCard item={item} key={index.toString()} />;
-          })}
-        </ScrollView>
-
-        {loading && <ActivityIndicator />}
+      <View style={styles.inputContainer}>
+        <TextInput placeholder="Search article here" style={styles.input} />
       </View>
+
+      {pinned.length > 0 && (
+        <Text style={{margin: 5, fontFamily: fonts.medium}}>Pinned</Text>
+      )}
+
+      <ScrollView horizontal style={{}}>
+        {pinned.map((item, index) => {
+          return (
+            <PinnedCard
+              key={index.toString()}
+              item={item}
+              onPress={() => {
+                dispatch(updatePinned(item));
+              }}
+            />
+          );
+        })}
+      </ScrollView>
+
+      <FlatList
+        data={results}
+        removeClippedSubviews
+        style={{marginTop: 10}}
+        renderItem={({item, index}) => {
+          return <NewsCard item={item} key={index.toString()} />;
+        }}
+        keyExtractor={(_, index) => index.toString()}
+      />
+
+      {loading && <ActivityIndicator />}
     </SafeAreaView>
   );
 };
@@ -99,6 +102,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F0F1FA',
     borderRadius: 100,
+    margin: 5,
   },
   input: {
     padding: 15,
