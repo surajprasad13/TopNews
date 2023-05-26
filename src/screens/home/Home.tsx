@@ -29,6 +29,7 @@ const Home = ({}) => {
 
   useEffect(() => {
     dispatch(fetchNews({limit: 10, skip: 0}));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const MINUTE_MS = 20 * 1000;
@@ -40,6 +41,7 @@ const Home = ({}) => {
     }, MINUTE_MS);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -54,7 +56,12 @@ const Home = ({}) => {
     return () => {
       subscription.remove();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const renderItem = ({item, index}: any) => (
+    <NewsCard item={item} key={index.toString()} />
+  );
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
@@ -84,9 +91,7 @@ const Home = ({}) => {
         data={results}
         removeClippedSubviews
         style={{marginTop: 10}}
-        renderItem={({item, index}) => {
-          return <NewsCard item={item} key={index.toString()} />;
-        }}
+        renderItem={renderItem}
         keyExtractor={(_, index) => index.toString()}
       />
 
